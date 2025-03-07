@@ -2,3 +2,5 @@
 ultralytics
 opencv-python
 matplotlib
+mysql-connector-python
+pyserial

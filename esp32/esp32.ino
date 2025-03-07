@@ -1,4 +1,5 @@
 #include <ESP32Servo.h>
+#include <LiquidCrystal_I2C.h> 
 
 // Inisialisasi servo
 Servo servo1;
@@ -16,8 +17,17 @@ int s1 = 45;
 int s2 = 60;
 int s3 = 135;
 
+// Funcins
+void openGate();
+void reset();
+void valid();
+void invalid();
+void servo_reset();
+void lcd_update(String cmd);
+
+LiquidCrystal_I2C lcd(0x27, 20, 4); // I2C address 0x27, 20 column and 4 rows
+
 void setup() {
-  // Inisialisasi serial
   Serial.begin(115200);
 
   // Attach servo ke pin
@@ -33,11 +43,14 @@ void setup() {
   servo3.write(s3); // -45 = ke kanan, +45 = ke kiri
   delay(2000);
 
-  // Inisialisasi LED
-  pinMode(led1, OUTPUT);
-  pinMode(led2, OUTPUT);
-  digitalWrite(led1, LOW);
-  digitalWrite(led2, LOW);
+  lcd.init();
+  lcd.backlight();
+
+  lcd.setCursor(0, 0);            
+  lcd.print("Revoira ⸙--------");     
+  lcd.setCursor(0, 2);           
+  lcd.print("Detected Object:");
+  
 }
 
 void loop() {
@@ -46,32 +59,34 @@ void loop() {
     String command = Serial.readStringUntil('\n');
     command.trim();  // Hilangkan spasi atau newline
 
+    lcd_update(command);
+
     if (command == "NONE") {
-      reset();
+        reset();
     } else if (command == "GLASS") {
-      invalid();
-      delay(1000);
-      servo_reset();
-      delay(5000);
+        invalid();
+        delay(1000);
+        servo_reset();
+        delay(5000);
     } else if (command == "CAN") {
-      valid();
-      delay(1000);
-      servo3.write(s3 + 45);
-      delay(5000);
-      openGate();
-      delay(5000);
+        valid();
+        delay(1000);
+        servo3.write(s3 + 45);
+        delay(1000);
+        openGate();
+        delay(5000);
      } else if (command == "PLASTIC") {
-      valid();
-      delay(1000);
-      servo3.write(s3);
-      delay(5000);
-      openGate();
-      delay(5000);
+        valid();
+        delay(1000);
+        servo3.write(s3);
+        delay(1000);
+        openGate();
+        delay(5000);
      } else if (command == "TETRAPAK") {
         valid();
         delay(1000);
         servo3.write(s3 - 45);
-        delay(5000);
+        delay(1000);
         openGate();
         delay(5000);
     }
@@ -106,4 +121,10 @@ void servo_reset() {
   servo2.write(s2);
   delay(1000);
   servo3.write(s3);
+}
+
+void lcd_update(String cmd) {
+  delay(1000);
+  lcd.setCursor(0, 3); 
+  lcd.print(cmd + "        ");
 }
