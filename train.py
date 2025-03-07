@@ -3,22 +3,21 @@ import torch
 import os
 
 def main():
-    # Load a pre-trained YOLOv8 model
-    model = YOLO("runs/detect/bottle-train/weights/last.pt")
+    model = YOLO("yolov8n.pt")
 
     # Train the model
     results = model.train(
-        data="data.yaml",  # Path to your dataset configuration file
-        epochs=50,            # Number of training epochs
-        batch=16,             # Batch size
-        imgsz=320,            # Image size
+        data="data.yaml",  
+        epochs=150,
+        warmup_epochs=3,            
+        batch=32,            
+        imgsz=640,          
         device="0",           # Use GPU (set to "cpu" if you don't have a GPU)
-        name="bottle-train-2",        # Name of the training run
+        name="bottle-150",        # Name of the training run
         workers=0,          # Disable multiprocessing (set to 0 for Windows)
-        resume=True
+        #resume=True
     )
 
 if __name__ == "__main__":
-    # Fix for multiprocessing on Windows
     torch.multiprocessing.freeze_support()
     main()
