@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 train: ../train/images
 val: ../valid/images
 test: ../test/images
+=======
+train: C:\Users\sanja\OneDrive\Documents\Revoira-Yolov8\stable_dataset\train\images
+val: C:\Users\sanja\OneDrive\Documents\Revoira-Yolov8\stable_dataset\valid\images
+test: C:\Users\sanja\OneDrive\Documents\Revoira-Yolov8\stable_dataset\test\images
+>>>>>>> 0590b66211be66ede4c8970e20dfcf4508561c56
 
 nc: 4
 names: ['can-bottle', 'glass-bottle', 'plastic-bottle', 'tetrapak']
