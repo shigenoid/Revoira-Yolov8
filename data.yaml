@@ -1,6 +1,6 @@
-train: C:\Users\sanja\OneDrive\Documents\Revoira-Yolov8\dataset\train\images
-val: C:\Users\sanja\OneDrive\Documents\Revoira-Yolov8\dataset\valid\images
-test: C:\Users\sanja\OneDrive\Documents\Revoira-Yolov8\dataset\test\images
+train: ../train/images
+val: ../valid/images
+test: ../test/images
 
 nc: 4
 names: ['can-bottle', 'glass-bottle', 'plastic-bottle', 'tetrapak']
