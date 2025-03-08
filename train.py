@@ -3,16 +3,16 @@ import torch
 import os
 
 def main():
-    model = YOLO("runs/detect/bottle-1504/weights/last.pt")
+    model = YOLO("yolov8n.pt")
 
     # Train the model
     results = model.train(
         data="data.yaml",  # Path to your dataset configuration file
-        epochs=50,            # Number of training epochs
-        batch=16,             # Batch size
-        imgsz=320,            # Image size
+        epochs=150,            # Number of training epochs
+        batch=64,             # Batch size
+        imgsz=640,            # Image size
         device="0",           # Use GPU (set to "cpu" if you don't have a GPU)
-        name="bottle-1504",        # Name of the training run
+        name="bottle-150",        # Name of the training run
         workers=0,          # Disable multiprocessing (set to 0 for Windows)
         #resume=True
     )

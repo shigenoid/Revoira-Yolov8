@@ -5,7 +5,7 @@ import serial
 import time
 from ultralytics import YOLO
 
-model = YOLO("runs/detect/bottle-train/weights/best.pt") 
+model = YOLO("runs/detect/bottle-1504/weights/best.pt") 
 
 # ESP32-CAM URL
 url = "http://192.168.8.78/cam-hi.jpg"
