@@ -3,7 +3,7 @@ import torch
 import os
 
 def main():
-    model = YOLO("yolov8n.pt")
+    model = YOLO("runs/detect/revoira-150/weights/last.pt")
 
     # Train the model
     results = model.train(
@@ -15,7 +15,7 @@ def main():
         device="0",           # Use GPU (set to "cpu" if you don't have a GPU)
         name="revoira-150",        # Name of the training run
         workers=0,          # Disable multiprocessing (set to 0 for Windows)
-        resume=False
+        resume=True
     )
 
 if __name__ == "__main__":
