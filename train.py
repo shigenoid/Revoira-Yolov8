@@ -15,7 +15,12 @@ def main():
         device="0",           # Use GPU (set to "cpu" if you don't have a GPU)
         name="revoira-150",        # Name of the training run
         workers=0,          # Disable multiprocessing (set to 0 for Windows)
-        resume=True
+        resume=True,
+        lr0=0.001,
+        weight_decay=0.001,  # Added regularization
+        cos_lr=True,  # Enable cosine schedule
+        patience=20,  # Early stopping
+        freeze=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     )
 
 if __name__ == "__main__":
