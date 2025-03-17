@@ -3,7 +3,7 @@ import torch
 import os
 
 def main():
-    model = YOLO("runs/detect/revoira-100/weights/last.pt")
+    model = YOLO("runs/detect/revoira-1002/weights/last.pt")
 
     # Train the model
     results = model.train(
