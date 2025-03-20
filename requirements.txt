@@ -3,4 +3,5 @@ ultralytics
 opencv-python
 matplotlib
 mysql-connector-python
-pyserial
+paho.mqtt.client
+dotenv
