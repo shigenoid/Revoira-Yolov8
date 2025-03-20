@@ -26,7 +26,7 @@ if not cam.isOpened():
 
 # Throttling Variables
 last_publish_time = 0
-PUBLISH_INTERVAL = 5  # Seconds
+PUBLISH_INTERVAL = 3  # Seconds
 
 while True:
     ret, frame = cam.read()
