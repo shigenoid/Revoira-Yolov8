@@ -18,7 +18,7 @@ mqttc.loop_start()
 model = YOLO('runs/detect/revoira-100/weights/best.pt')
 
 # Load image (replace with your image path)
-image_path = "test-img/plastic/1.jpg"
+image_path = "test-img/tetrapak/1.jpg"
 image = cv2.imread(image_path)
 if image is None:
     print("Error loading image")

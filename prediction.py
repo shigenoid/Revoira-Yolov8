@@ -18,6 +18,9 @@ mqttc.loop_start()
 # YOLOv8 Model
 model = YOLO('runs/detect/revoira-100/weights/best.pt')  # Replace with your trained model
 
+#esp32
+url = "http://192.168.84.187/cam-hi.jpg"
+
 # Webcam Setup
 cam = cv2.VideoCapture(0)
 if not cam.isOpened():

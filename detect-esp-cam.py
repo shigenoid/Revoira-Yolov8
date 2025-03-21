@@ -1,91 +1,62 @@
-import cv2
-import numpy as np
-import urllib.request
-import serial
-import time
 from ultralytics import YOLO
+import cv2
+import paho.mqtt.client as mqtt
+import time
+import os
+import urllib.request
+import numpy as np
+from dotenv import load_dotenv
 
-model = YOLO("runs/detect/bottle-1504/weights/best.pt") 
+load_dotenv()  # .env file must exist in the same folder
 
-# ESP32-CAM URL
-url = "http://192.168.8.78/cam-hi.jpg"
+# MQTT setup
+mqttc = mqtt.Client(
+    mqtt.CallbackAPIVersion.VERSION2,
+    client_id=os.getenv("CLIENT_ID")  # Client ID from .env
+)
+mqttc.connect(os.getenv("MQTT_SERVER"), int(os.getenv("MQTT_PORT")))
+mqttc.loop_start()
 
-# ESP32 Serial Communication
-ser = serial.Serial('COM4', 115200, timeout=1) 
-time.sleep(2)  
+# YOLOv8 Model
+model = YOLO('runs/detect/bottle-train/weights/best.pt')  # Replace with your trained model
 
-# ESP32 Commands
-def send_command(class_name):
-    if class_name == "glass-bottle":
-        ser.write(b'GLASS\n')  
-    elif class_name == "can-bottle":
-        ser.write(b'CAN\n') 
-    elif class_name == "plastic-bottle":
-        ser.write(b'PLASTIC\n') 
-    elif class_name == "tetrapak":
-        ser.write(b'TETRAPAK\n') 
-    else:
-        ser.write(b'NONE\n')  
+# ESP32-CAM Streaming URL
+ESP_CAM_URL = os.getenv("ESP_CAM_URL")  # Example: http://192.168.x.x/cam-hi.jpg
 
-# Detection Intervals
-last_detection_time = time.time()  
-detection_interval = 1 
-
-# Command Intervals
-last_command_time = time.time() 
-command_interval = 5 
-
-last_detected_class = None
+# Throttling Variables
+last_publish_time = 0
+PUBLISH_INTERVAL = 3  # Seconds
 
 while True:
-    current_time = time.time()
+    try:
+        # Capture frame from ESP32-CAM
+        img_resp = urllib.request.urlopen(ESP_CAM_URL)
+        img_array = np.array(bytearray(img_resp.read()), dtype=np.uint8)
+        frame = cv2.imdecode(img_array, -1)
 
-    # Is it the time to detect image
-    if current_time - last_detection_time >= detection_interval:
-        try:
-            img_resp = urllib.request.urlopen(url)
-            img_array = np.array(bytearray(img_resp.read()), dtype=np.uint8)
-            frame = cv2.imdecode(img_array, -1)
-        except Exception as e:
-            print(f"Failed to fetch frame: {e}. Retrying...")
-            continue
+        # YOLOv8 Inference
+        results = model.predict(frame, conf=0.6)
+        detected_classes = set()
 
-        # Run YOLOv8 inference
-        results = model(frame)  
-
-        # Reset last_detected_class
-        last_detected_class = None
-
-        # Get detected classes
+        # Process Results
         for result in results:
-            boxes = result.boxes  # Get bounding boxes
-            for box in boxes:
-                class_id = int(box.cls)  # Get class ID
-                class_name = model.names[class_id]  # Get class name
-                print(f"Detected: {class_name}")
+            for box in result.boxes:
+                cls_id = int(box.cls.item())
+                detected_classes.add(model.names[cls_id])
 
-                last_detected_class = class_name
+        # Throttled MQTT Publishing
+        current_time = time.time()
+        if current_time - last_publish_time >= PUBLISH_INTERVAL:
+            msg = ",".join(detected_classes) if detected_classes else "NONE"
+            mqttc.publish(os.getenv("MQTT_TOPIC"), msg)
+            last_publish_time = current_time
 
-        last_detection_time = current_time
+        # Display Annotated Frame
+        cv2.imshow('ESP32-CAM Stream', results[0].plot())
+        if cv2.waitKey(1) == ord('q'):
+            break
 
-        # Visualize the results
-        annotated_frame = results[0].plot() 
+    except Exception as e:
+        print(f"Error: {e}. Retrying...")
 
-        # Display the annotated frame
-        cv2.imshow("YOLOv8 Detection", annotated_frame)
-
-    # Is it the time to send command
-    if current_time - last_command_time >= command_interval:
-        if last_detected_class:
-            send_command(last_detected_class) 
-        else:
-            send_command("NONE") 
-
-        last_command_time = current_time
-
-    # Exit Command
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-ser.close()
 cv2.destroyAllWindows()
