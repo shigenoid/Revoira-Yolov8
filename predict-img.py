@@ -18,7 +18,7 @@ mqttc.loop_start()
 model = YOLO('runs/detect/revoira-100/weights/best.pt')
 
 # Load image (replace with your image path)
-image_path = "test-img/tetrapak/1.jpg"
+image_path = "test-img/can/3.jpg"
 image = cv2.imread(image_path)
 if image is None:
     print("Error loading image")
@@ -44,9 +44,29 @@ mqttc.publish(os.getenv("MQTT_TOPIC"), msg)
 output_dir = "predict-results"
 os.makedirs(output_dir, exist_ok=True)
 
+# Function to get a unique filename
+def get_unique_filename(output_dir, base_name, extension="jpg"):
+    filename = f"{base_name}.{extension}"
+    file_path = os.path.join(output_dir, filename)
+    counter = 2
+
+    while os.path.exists(file_path):
+        filename = f"{base_name}-{counter}.{extension}"
+        file_path = os.path.join(output_dir, filename)
+        counter += 1
+
+    return file_path
+
+# Generate a unique filename based on detected classes
+if detected_classes:
+    base_name = "-".join(detected_classes)  # Example: "plastic-metal"
+else:
+    base_name = "unknown"
+
+output_path = get_unique_filename(output_dir, base_name)
+
 # Save annotated image
 annotated_image = results[0].plot()
-output_path = os.path.join(output_dir, "predicted-image.jpg")
 cv2.imwrite(output_path, annotated_image)
 
 # Cleanup

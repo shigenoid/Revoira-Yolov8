@@ -1,0 +1,7 @@
+Servo 1 -> D12
+Servo 2 -> D13
+Servo 3 -> D14
+
+LCD I2C SDA -> D21
+	SCL -> D22
+
