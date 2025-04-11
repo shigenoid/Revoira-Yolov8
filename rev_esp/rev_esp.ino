@@ -4,8 +4,8 @@
 #include <ESP32Servo.h>
 
 // Wifi
-#define WIFI_SSID "noid"
-#define WIFI_PASS "pulogadung90"
+#define WIFI_SSID ""
+#define WIFI_PASS ""
 
 // MQTT
 #define MQTT_BROKER ""  
