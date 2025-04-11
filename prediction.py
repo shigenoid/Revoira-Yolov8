@@ -5,7 +5,7 @@ import time
 import os
 from dotenv import load_dotenv
 
-load_dotenv()  # .env file must exist in same folder
+load_dotenv() 
 
 # MQTT setup
 mqttc = mqtt.Client(
@@ -16,7 +16,7 @@ mqttc.connect(os.getenv("MQTT_SERVER"), int(os.getenv("MQTT_PORT")))
 mqttc.loop_start()
 
 # YOLOv8 Model
-model = YOLO('runs/detect/bottle-train/weights/best.pt')  # Replace with your trained model
+model = YOLO('runs/detect/bottle-train/weights/best.pt') 
 
 # Webcam Setup
 cam = cv2.VideoCapture(0)
