@@ -1,0 +1,3 @@
+[submodule ".App Prototype"]
+	path = .App Prototype
+	url = https://github.com/shigenoid/revoira-native
