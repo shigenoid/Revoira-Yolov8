@@ -1,6 +1,6 @@
 [submodule ".App Prototype"]
 	path = .App Prototype
 	url = https://github.com/shigenoid/revoira-native
-[submodule "Streamlit code"]
-	path = Streamlit code
+[submodule ".Streamlit code"]
+	path = .Streamlit code
 	url = https://github.com/shigenoid/rev-streamlit
